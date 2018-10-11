@@ -8,12 +8,12 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -115,7 +115,7 @@ public class TableInformationPanel extends JPanel {
 	}
 
 	public static TableInformationPanel displayTasksList(List<Task> tasks) {
-		return new TableInformationPanel("Tasks", tasks,
+		TableInformationPanel tableInformationPanel = new TableInformationPanel("Tasks", tasks,
 		        new TableColumnHelper<Task>("edit", 50, i -> Application.taskController().edit(i)),
 		        new TableColumnHelper<Task>("del", 50, i -> {
 			        if (confirm("Do you really want to delete #" + i + "?")) {
@@ -134,6 +134,40 @@ public class TableInformationPanel extends JPanel {
 		        new TableColumnHelper<Task>("Rest", Task.class, Long.class, Task::getRest, 100),
 		        new TableColumnHelper<Task>("%", Task.class, String.class, task -> task.getPercentageDone() + "%", 50),
 		        new TableColumnHelper<Task>("Ready", Task.class, Boolean.class, task -> task.isReady(), 50));
+
+		GridBagLayout gridBagLayout = (GridBagLayout) tableInformationPanel.getLayout();
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
+
+		JLabel lblTitle = MainFrame.buildHeader1("Report");
+		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
+		gbc_lblTitle.gridwidth = 2;
+		gbc_lblTitle.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTitle.gridx = 1;
+		gbc_lblTitle.gridy = 2;
+		tableInformationPanel.add(lblTitle, gbc_lblTitle);
+
+		String buildReport = Application.taskController().buildReport();
+
+		JTextArea textarea = MainFrame.buildTextarea(buildReport);
+		GridBagConstraints gbc_lblQuickFind = new GridBagConstraints();
+		gbc_lblQuickFind.insets = new Insets(0, 0, 0, 5);
+		gbc_lblQuickFind.gridx = 0;
+		gbc_lblQuickFind.gridy = 3;
+		gbc_lblQuickFind.gridwidth = 4;
+		gbc_lblQuickFind.fill = GridBagConstraints.BOTH;
+		tableInformationPanel.add(new JScrollPane(textarea), gbc_lblQuickFind);
+
+		JButton btnSomeButton = new JButton("Post on whitepr");
+		btnSomeButton.addActionListener(e -> Application.taskController().postPRReport(buildReport));
+		GridBagConstraints gbc_btnSomeButton = new GridBagConstraints();
+		gbc_btnSomeButton.anchor = GridBagConstraints.SOUTH;
+		gbc_btnSomeButton.insets = new Insets(0, 0, 5, 0);
+		gbc_btnSomeButton.gridx = 3;
+		gbc_btnSomeButton.gridy = 2;
+		tableInformationPanel.add(btnSomeButton, gbc_btnSomeButton);
+
+		return tableInformationPanel;
 	}
 
 	public static TableInformationPanel displayForumsList(List<Forum> forums) {
@@ -174,6 +208,10 @@ public class TableInformationPanel extends JPanel {
 		                BannerTask::getRunStatus, 100),
 		        new TableColumnHelper<BannerTask>("Big", BannerTask.class, Boolean.class, task -> task.isBig(), 50));
 
+		GridBagLayout gridBagLayout = (GridBagLayout) tableInformationPanel.getLayout();
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
+
 		JLabel lblTitle = MainFrame.buildHeader1("Code");
 		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
 		gbc_lblTitle.gridwidth = 2;
@@ -182,38 +220,18 @@ public class TableInformationPanel extends JPanel {
 		gbc_lblTitle.gridy = 2;
 		tableInformationPanel.add(lblTitle, gbc_lblTitle);
 
-		StringBuilder code = new StringBuilder("[align=center]");
-		List<BannerTask> small = banners.stream()
-		        .filter(b -> !b.isBig())
-		        .collect(Collectors.toList());
-
-		int cutSize = small.size() > 6 ? small.size() / 2 : -1;
-
-		for (int i = 0; i < small.size(); i++) {
-			BannerTask b = small.get(i);
-			if (i == cutSize) {
-				code.append("\n");
-			}
-			code.append("[url=http://" + b.getForum().getUrl() + "][img]" + b.getImage() + "[/img][/url] ");
-		}
-
-		banners.stream()
-		        .filter(b -> b.isBig())
-		        .forEach(b -> code.append("\n[url=http://" + b.getForum().getUrl()
-		                + "][img]" + b.getImage() + "[/img][/url]"));
-
-		code.append("[/align]");
-		JTextArea lblQuickFind = new JTextArea(code.toString());
+		String signature = Application.bannerController().buildSignature();
+		JTextArea textarea = MainFrame.buildTextarea(signature);
 		GridBagConstraints gbc_lblQuickFind = new GridBagConstraints();
 		gbc_lblQuickFind.insets = new Insets(0, 0, 0, 5);
 		gbc_lblQuickFind.gridx = 0;
 		gbc_lblQuickFind.gridy = 3;
 		gbc_lblQuickFind.gridwidth = 4;
 		gbc_lblQuickFind.fill = GridBagConstraints.BOTH;
-		tableInformationPanel.add(lblQuickFind, gbc_lblQuickFind);
+		tableInformationPanel.add(new JScrollPane(textarea), gbc_lblQuickFind);
 
 		JButton btnSomeButton = new JButton("Update signatures");
-		btnSomeButton.addActionListener(e -> Application.bannerController().updateSignatures(code.toString()));
+		btnSomeButton.addActionListener(e -> Application.bannerController().updateSignatures(signature));
 		GridBagConstraints gbc_btnSomeButton = new GridBagConstraints();
 		gbc_btnSomeButton.anchor = GridBagConstraints.SOUTH;
 		gbc_btnSomeButton.insets = new Insets(0, 0, 5, 0);

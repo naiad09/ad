@@ -1,6 +1,7 @@
 package ad.frames;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -13,8 +14,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import ad.Application;
 
@@ -56,10 +59,6 @@ public class MainFrame extends JFrame {
 		btnBanners.addActionListener(e -> Application.bannerController().displayAll());
 		menuBar.add(btnBanners);
 
-		JButton btnReport = new JButton("Report");
-		btnReport.addActionListener(e -> Application.taskController().displayReport());
-		menuBar.add(btnReport);
-
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
 		verticalBox = Box.createVerticalBox();
@@ -97,5 +96,12 @@ public class MainFrame extends JFrame {
 		titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		return titleLabel;
+	}
+
+	public static JTextArea buildTextarea(String code) {
+		JTextArea textAreaCode = new JTextArea(code);
+		textAreaCode.setFont(new Font("Consolas", Font.PLAIN, 12));
+		textAreaCode.setBorder(new LineBorder(Color.GRAY));
+		return textAreaCode;
 	}
 }

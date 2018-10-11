@@ -1,6 +1,7 @@
 package ad.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ad.Application;
 import ad.domain.dao.util.ForumDao;
@@ -62,5 +63,33 @@ public class BannerController extends AbstractController<BannerTask> {
 				e.printStackTrace();
 			}
 		});
+	}
+
+	public String buildSignature() {
+		List<BannerTask> banners = dao.getAll();
+
+		StringBuilder code = new StringBuilder("[align=center]");
+		List<BannerTask> small = banners.stream()
+		        .filter(b -> !b.isBig())
+		        .collect(Collectors.toList());
+
+		int cutSize = small.size() > 6 ? small.size() / 2 : -1;
+
+		for (int i = 0; i < small.size(); i++) {
+			BannerTask b = small.get(i);
+			if (i == cutSize) {
+				code.append("\n");
+			}
+			code.append("[url=http://" + b.getForum().getUrl() + "][img]" + b.getImage() + "[/img][/url] ");
+		}
+
+		banners.stream()
+		        .filter(b -> b.isBig())
+		        .forEach(b -> code.append("\n[url=http://" + b.getForum().getUrl()
+		                + "][img]" + b.getImage() + "[/img][/url]"));
+
+		code.append("[/align]");
+
+		return code.toString();
 	}
 }

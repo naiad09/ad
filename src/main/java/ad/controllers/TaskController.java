@@ -1,19 +1,18 @@
 package ad.controllers;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.swing.JTextArea;
-import javax.swing.border.LineBorder;
-
 import ad.Application;
+import ad.domain.dao.util.ForumDao;
+import ad.domain.entities.Account;
 import ad.domain.entities.Forum;
 import ad.domain.entities.task.Task;
 import ad.frames.EditTaskForm;
 import ad.frames.TableInformationPanel;
+import http.pages.LoginPage;
+import http.pages.TopicPage;
 
 public class TaskController extends AbstractController<Task> {
 
@@ -53,7 +52,7 @@ public class TaskController extends AbstractController<Task> {
 		mainFrame().openFrame(TableInformationPanel.displayTasksList(entities));
 	}
 
-	public void displayReport() {
+	public String buildReport() {
 		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
 		StringBuilder code = new StringBuilder("[quote][align=center]\r\n"
 		        + "[size=14][b]" + date + "[/b][/size][/align]\r\n"
@@ -62,8 +61,8 @@ public class TaskController extends AbstractController<Task> {
 		List<Task> all = dao.getAll();
 		for (int i = 0; i < all.size(); i++) {
 			Task task = all.get(i);
-			code.append("[tr][td rowspan=2 width=10%][size=45]"
-			        + ((i % 2 == 0) ? "🍁" : "🍂")
+			code.append("[tr][td rowspan=2 width=10%][size=35]"
+			        + ((i % 2 == 0) ? "&#127809;" : "&#127810;")
 			        + "[/size][/td][td width=1% rowspan=2][/td]\r\n" +
 			        "[td colspan=4][size=12][b][url=http://" + task.getClient().getUrl() + "]"
 			        + task.getClient().getForumName() + "[/url][/b][/size][/td][/tr]\r\n" +
@@ -76,9 +75,19 @@ public class TaskController extends AbstractController<Task> {
 
 		code.append("[/table][/quote]");
 
-		JTextArea textAreaCode = new JTextArea(code.toString());
-		textAreaCode.setFont(new Font("Consolas", Font.PLAIN, 12));
-		textAreaCode.setBorder(new LineBorder(Color.GRAY));
-		mainFrame().openFrame(textAreaCode);
+		return code.toString();
+	}
+
+	public void postPRReport(String string) {
+		ForumDao forumDao = new ForumDao();
+		Forum white = forumDao.get(16);
+
+		Account account = white.getAccount();
+
+		LoginPage loginPage = new LoginPage(white.getUrl());
+		loginPage.login(account.getLogin(), account.getPassword());
+
+		TopicPage topicPage = loginPage.getTopicPage(3929);
+		topicPage.post(string);
 	}
 }

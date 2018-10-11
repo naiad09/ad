@@ -1,6 +1,5 @@
 package ad.frames;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -18,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 import javax.swing.text.NumberFormatter;
 
 import ad.Application;
@@ -134,9 +132,7 @@ public class EditForumForm extends JPanel {
 		textFieldId.setColumns(10);
 		textFieldId.setEnabled(false);
 
-		textAreaCode = new JTextArea();
-		textAreaCode.setFont(new Font("Consolas", Font.PLAIN, 12));
-		textAreaCode.setBorder(new LineBorder(Color.GRAY));
+		textAreaCode = MainFrame.buildTextarea("");
 		GridBagConstraints gbc_textAreaCode = new GridBagConstraints();
 		gbc_textAreaCode.insets = new Insets(0, 0, 5, 0);
 		gbc_textAreaCode.gridheight = 9;
