@@ -5,13 +5,16 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -31,9 +34,9 @@ public class TableInformationPanel extends JPanel {
 	public <E extends BaseEntity> TableInformationPanel(String title, List<E> entities, TableColumnHelper<E>... helpers) {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
 		JLabel lblTotalValue = new JLabel("Total: " + entities.size());
@@ -57,7 +60,6 @@ public class TableInformationPanel extends JPanel {
 		MyTable table = new MyTable(entities, helpers);
 		GridBagConstraints gbc_table = new GridBagConstraints();
 		gbc_table.fill = GridBagConstraints.BOTH;
-		gbc_table.insets = new Insets(0, 0, 5, 0);
 		gbc_table.gridwidth = 4;
 		gbc_table.gridx = 0;
 		gbc_table.gridy = 1;
@@ -154,7 +156,7 @@ public class TableInformationPanel extends JPanel {
 	}
 
 	public static TableInformationPanel displayBannersList(List<BannerTask> banners) {
-		return new TableInformationPanel("Banners", banners,
+		TableInformationPanel tableInformationPanel = new TableInformationPanel("Banners", banners,
 		        new TableColumnHelper<BannerTask>("edit", 50, i -> Application.bannerController().edit(i)),
 		        new TableColumnHelper<BannerTask>("del", 50, i -> {
 			        if (confirm("Do you really want to delete #" + i + "?")) {
@@ -164,10 +166,61 @@ public class TableInformationPanel extends JPanel {
 		        new TableColumnHelper<BannerTask>("#", BannerTask.class, Integer.class, BannerTask::getId, 50),
 		        new TableColumnHelper<BannerTask>("Client", BannerTask.class, String.class, t -> t.getForum().getUrl()),
 		        new TableColumnHelper<BannerTask>("Image", BannerTask.class, String.class, t -> t.getImage()),
+		        new TableColumnHelper<BannerTask>("Till date", BannerTask.class, LocalDate.class,
+		                BannerTask::getTillDate, 200),
 		        new TableColumnHelper<BannerTask>("Paid status", BannerTask.class, PaidStatus.class,
 		                BannerTask::getPaidStatus, 100),
 		        new TableColumnHelper<BannerTask>("Run status", BannerTask.class, RunStatus.class,
 		                BannerTask::getRunStatus, 100),
 		        new TableColumnHelper<BannerTask>("Big", BannerTask.class, Boolean.class, task -> task.isBig(), 50));
+
+		JLabel lblTitle = MainFrame.buildHeader1("Code");
+		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
+		gbc_lblTitle.gridwidth = 2;
+		gbc_lblTitle.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTitle.gridx = 1;
+		gbc_lblTitle.gridy = 2;
+		tableInformationPanel.add(lblTitle, gbc_lblTitle);
+
+		StringBuilder code = new StringBuilder("[align=center]");
+		List<BannerTask> small = banners.stream()
+		        .filter(b -> !b.isBig())
+		        .collect(Collectors.toList());
+
+		int cutSize = small.size() > 6 ? small.size() / 2 : -1;
+
+		for (int i = 0; i < small.size(); i++) {
+			BannerTask b = small.get(i);
+			if (i == cutSize) {
+				code.append("\n");
+			}
+			code.append("[url=http://" + b.getForum().getUrl() + "][img]" + b.getImage() + "[/img][/url] ");
+		}
+
+		banners.stream()
+		        .filter(b -> b.isBig())
+		        .forEach(b -> code.append("\n[url=http://" + b.getForum().getUrl()
+		                + "][img]" + b.getImage() + "[/img][/url]"));
+
+		code.append("[/align]");
+		JTextArea lblQuickFind = new JTextArea(code.toString());
+		GridBagConstraints gbc_lblQuickFind = new GridBagConstraints();
+		gbc_lblQuickFind.insets = new Insets(0, 0, 0, 5);
+		gbc_lblQuickFind.gridx = 0;
+		gbc_lblQuickFind.gridy = 3;
+		gbc_lblQuickFind.gridwidth = 4;
+		gbc_lblQuickFind.fill = GridBagConstraints.BOTH;
+		tableInformationPanel.add(lblQuickFind, gbc_lblQuickFind);
+
+		JButton btnSomeButton = new JButton("Update signatures");
+		btnSomeButton.addActionListener(e -> Application.bannerController().updateSignatures(code.toString()));
+		GridBagConstraints gbc_btnSomeButton = new GridBagConstraints();
+		gbc_btnSomeButton.anchor = GridBagConstraints.SOUTH;
+		gbc_btnSomeButton.insets = new Insets(0, 0, 5, 0);
+		gbc_btnSomeButton.gridx = 3;
+		gbc_btnSomeButton.gridy = 2;
+		tableInformationPanel.add(btnSomeButton, gbc_btnSomeButton);
+
+		return tableInformationPanel;
 	}
 }
