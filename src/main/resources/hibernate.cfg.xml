@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/pr?characterEncoding=utf8</property>
+		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.connection.password">1234</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
+		<property name="hibernate.default_schema">pr</property>
+		<property name="show_sql">true</property>
+		
+		<mapping class="ad.domain.entities.Forum" />
+		<mapping class="ad.domain.entities.Account" />
+		<mapping class="ad.domain.entities.PrPost" />
+		<mapping class="ad.domain.entities.task.Task" />
+		<mapping class="ad.domain.entities.PrRaid" />
+		<mapping class="ad.domain.entities.PrExchange" />
+		<mapping class="ad.domain.entities.BannerTask" />
+		<mapping class="ad.domain.entities.lastpost.ForumLastPost" />
+	</session-factory>
+</hibernate-configuration>

@@ -1,0 +1,5 @@
+package ad.domain.entities.error;
+
+public enum ForumErrorType {
+	ACCOUNT_NOT_FOUND, VISITORS_NOT_FOUND, TOPIC_NOT_FOUND, AUTH_FAILED, STRANGE_CODE, TOPIC_ENDED, NOT_MYBB, CODE_NOT_FOUND, CLOSED;
+}
