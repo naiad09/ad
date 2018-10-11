@@ -200,7 +200,8 @@ public class Task extends BaseEntity implements Serializable {
 	public boolean isReady() {
 		return client.isReady()
 		        && getToday() < getPerDay()
-		        && getDone() < getTotal();
+		        && getDone() < getTotal()
+		        && getRunStatus() == RunStatus.ACT;
 	}
 
 }

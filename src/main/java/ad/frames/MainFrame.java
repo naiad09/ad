@@ -3,7 +3,6 @@ package ad.frames;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -28,7 +27,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		super("Hello, World!");
 
-		setSize(new Dimension(1300, 768));
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			@Override

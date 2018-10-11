@@ -19,7 +19,7 @@ public class GenericDAO<E> {
 		this.daoType = type;
 	}
 
-	protected Session currentSession() {
+	private Session currentSession() {
 		return HibernateUtil.getSession();
 		// return HibernateUtil.getSessionFactory().openSession();
 	}

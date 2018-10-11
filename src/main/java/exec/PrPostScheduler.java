@@ -119,6 +119,11 @@ public class PrPostScheduler {
 			catch (AuthFailedException e1) {
 				forum.setAccount(null);
 				forumDao.saveOrUpdate(forum);
+				postQueue.removeIf(p -> p.forum == forum);
+				return false;
+			}
+			catch (RuntimeException e) {
+				postQueue.removeIf(p -> p.forum == forum);
 				return false;
 			}
 
@@ -128,10 +133,12 @@ public class PrPostScheduler {
 			catch (NotFound404Exception e) {
 				forum.setTopic(0);
 				forumDao.saveOrUpdate(forum);
+				postQueue.removeIf(p -> p.forum == forum);
 				return false;
 			}
 
-			if (clientTopicPage.isPresentedOnLastPage(forum) || codePage.isPresentedOnLastPage(client)) {
+			if (clientTopicPage.isPresentedOnLastPage(forum)
+			        || codePage.isPresentedOnLastPage(client)) {
 				saveForumLastPost(forum, client);
 				return false;
 			}
@@ -167,7 +174,7 @@ public class PrPostScheduler {
 					        return hours > 4 && hours > 500 / forum.getVisitors();
 				        }
 			        })
-			        .limit(task.getPerDay() - task.getToday())
+			        .limit((long) ((task.getPerDay() - task.getToday()) * 1.1))
 			        .collect(Collectors.toList());
 		}
 
