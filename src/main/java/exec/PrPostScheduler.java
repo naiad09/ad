@@ -174,7 +174,7 @@ public class PrPostScheduler {
 					        return hours > 4 && hours > 500 / forum.getVisitors();
 				        }
 			        })
-			        .limit((long) ((task.getPerDay() - task.getToday()) * 1.1))
+			        .limit(Math.max((long) ((task.getPerDay() - task.getToday()) * 1.1), 0))
 			        .collect(Collectors.toList());
 		}
 

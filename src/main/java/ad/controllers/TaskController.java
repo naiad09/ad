@@ -3,11 +3,13 @@ package ad.controllers;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ad.Application;
 import ad.domain.dao.util.ForumDao;
 import ad.domain.entities.Account;
 import ad.domain.entities.Forum;
+import ad.domain.entities.task.RunStatus;
 import ad.domain.entities.task.Task;
 import ad.frames.EditTaskForm;
 import ad.frames.TableInformationPanel;
@@ -58,7 +60,9 @@ public class TaskController extends AbstractController<Task> {
 		        + "[size=14][b]" + date + "[/b][/size][/align]\r\n"
 		        + "[table]\n\n");
 
-		List<Task> all = dao.getAll();
+		List<Task> all = dao.getAll()
+		        .stream().filter(t -> t.getRunStatus() == RunStatus.ACT)
+		        .collect(Collectors.toList());
 		for (int i = 0; i < all.size(); i++) {
 			Task task = all.get(i);
 			code.append("[tr][td rowspan=2 width=10%][size=35]"
