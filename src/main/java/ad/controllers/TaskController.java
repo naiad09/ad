@@ -61,9 +61,11 @@ public class TaskController extends AbstractController<Task> {
 		List<Task> all = dao.getAll();
 		for (int i = 0; i < all.size(); i++) {
 			Task task = all.get(i);
-			code.append("[tr][td rowspan=2 width=10%][size=35]"
-			        + ((i % 2 == 0) ? "&#127809;" : "&#127810;")
-			        + "[/size][/td][td width=1% rowspan=2][/td]\r\n" +
+			code.append("[tr][td rowspan=2 width=9%][img]"
+			        + ((i % 2 == 0)
+			                ? "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/153/maple-leaf_1f341.png"
+			                : "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/153/fallen-leaf_1f342.png")
+			        + "[/img][/td][td width=1% rowspan=2][/td]\r\n" +
 			        "[td colspan=4][size=12][b][url=http://" + task.getClient().getUrl() + "]"
 			        + task.getClient().getForumName() + "[/url][/b][/size][/td][/tr]\r\n" +
 			        "[tr][td][i]Всего[/i]: " + task.getTotal()
