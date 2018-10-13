@@ -134,7 +134,7 @@ public class TableInformationPanel extends JPanel {
 		        new TableColumnHelper<Task>("Rest", Task.class, Long.class, Task::getRest, 100),
 		        new TableColumnHelper<Task>("%", Task.class, String.class, task -> task.getPercentageDone() + "%", 50),
 		        new TableColumnHelper<Task>("Finished Today", Task.class, Boolean.class,
-		                task -> task.getPerDay() <= task.getToday(), 50),
+		                task -> task.getPerDay() <= task.getToday() || task.getRest() == 0, 50),
 		        new TableColumnHelper<Task>("Ready", Task.class, Boolean.class, task -> task.isReady(), 50));
 
 		GridBagLayout gridBagLayout = (GridBagLayout) tableInformationPanel.getLayout();
