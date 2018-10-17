@@ -45,7 +45,7 @@ public class PrPostScheduler {
 		        .map(PrAgent::new)
 		        .collect(Collectors.toList());
 
-		agents.forEach(PrAgent::login);
+		agents.removeIf(a -> !a.login());
 
 		agentsAddPosts();
 	}
@@ -187,14 +187,16 @@ public class PrPostScheduler {
 			return post == null ? null : post.getDate();
 		}
 
-		public void login() {
+		public boolean login() {
 			LoginPage clientLoginPage = new LoginPage(client.getUrl());
 			clientLoginPage.login(client.getAccount());
 			try {
 				topicPage = clientLoginPage.getTopicPage(client.getTopic());
+				return true;
 			}
 			catch (NotFound404Exception e) {
 				end();
+				return false;
 			}
 		}
 
