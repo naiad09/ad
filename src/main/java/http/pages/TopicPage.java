@@ -28,7 +28,7 @@ public class TopicPage extends AbstractHttpPage {
 
 		String openPage = openPage();
 		if (!openPage.contains("textarea id=\"main-reply\"")) {
-			throw new NotFound404Exception("Topic is ended");
+			throw new NotFound404Exception("Topic is ended on " + host + VIEWTOPIC_PHP_ID + topicNum);
 		}
 	}
 

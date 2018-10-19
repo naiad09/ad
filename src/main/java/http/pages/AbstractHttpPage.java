@@ -56,7 +56,7 @@ public class AbstractHttpPage {
 	}
 
 	protected String callGet(String url) {
-		return client.get(host + url, getFullUrl());
+		return client.get(getFullUrl(), getFullUrl());
 	}
 
 }

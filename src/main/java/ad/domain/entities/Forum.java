@@ -1,6 +1,7 @@
 package ad.domain.entities;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -284,7 +285,8 @@ public class Forum extends BaseEntity implements Serializable {
 	// }
 
 	public boolean isReady() {
-		return topic != 0
+		return updateDate.toLocalDate().plusDays(7).isAfter(LocalDate.now())
+		        && topic != 0
 		        && code != null && !code.isEmpty()
 		        && getLogin() != null
 		        && getPassword() != null;

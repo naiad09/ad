@@ -19,7 +19,7 @@ public class IndexPage extends AbstractHttpPage {
 
 	private static final List<String> prMarkers = Arrays.asList("еклам", "истовк", "пиар", "ваши", "dvertising");
 
-	private static final List<String> badMarkers = Arrays.asList("остев");
+	private static final List<String> badMarkers = Arrays.asList("остев", "рхив");
 
 	public IndexPage(String baseUrl) {
 		super(baseUrl, "");
