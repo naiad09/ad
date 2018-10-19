@@ -164,6 +164,9 @@ public class Forum extends BaseEntity implements Serializable {
 
 	public void setTopic(int topic) {
 		this.topic = topic;
+		if (topic == 0) {
+			setCode(null);
+		}
 	}
 
 	public LocalDateTime getUpdateDate() {
@@ -285,8 +288,12 @@ public class Forum extends BaseEntity implements Serializable {
 	// }
 
 	public boolean isReady() {
-		return updateDate.toLocalDate().plusDays(7).isAfter(LocalDate.now())
-		        && topic != 0
+		return getUpdateDate().toLocalDate().plusDays(7).isAfter(LocalDate.now())
+		        && isAllSet();
+	}
+
+	public boolean isAllSet() {
+		return topic != 0
 		        && code != null && !code.isEmpty()
 		        && getLogin() != null
 		        && getPassword() != null;

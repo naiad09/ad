@@ -40,7 +40,7 @@ public class AbstractHttpPage {
 	}
 
 	protected String callPost(String postUrl, HashMap<String, String> hiddenKeys) {
-		HttpPost post = client.newPost(host + postUrl, getFullUrl());
+		HttpPost post = client.newPost(host + postUrl);
 
 		List<NameValuePair> postParams = hiddenKeys.entrySet().stream()
 		        .map(e -> new BasicNameValuePair(e.getKey(), e.getValue())).collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class AbstractHttpPage {
 	}
 
 	protected String callGet(String url) {
-		return client.get(getFullUrl(), getFullUrl());
+		return client.get(getFullUrl());
 	}
 
 }

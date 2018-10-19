@@ -12,6 +12,7 @@ import ad.domain.entities.Forum;
 import ad.tests.AbstractTest;
 import http.pages.IndexPage;
 import http.pages.IndexPage.ForumHtmlScan;
+import http.pages.LoginPage;
 import http.pages.TopicPage;
 
 public class UpdateTopicTest extends AbstractTest {
@@ -27,7 +28,7 @@ public class UpdateTopicTest extends AbstractTest {
 		        .collect(Collectors.toList());
 	}
 
-	@DataProvider(parallel = true)
+	@DataProvider
 	public Object[] forums() {
 		return forums.toArray();
 	}
@@ -38,7 +39,7 @@ public class UpdateTopicTest extends AbstractTest {
 
 		forumDao.saveOrUpdate(forum);
 		System.out.println("Saved forum " + forum);
-		assertTrue(forum.isReady());
+		assertTrue(forum.isAllSet());
 	}
 
 	public static void update(Forum forum) {
@@ -61,8 +62,11 @@ public class UpdateTopicTest extends AbstractTest {
 
 		ForumHtmlScan scan = indexPage.getTopicId();
 
+		LoginPage loginPage = new LoginPage(forum.getUrl());
+		loginPage.login(forum.getAccount());
+
 		int topicNum = scan.getTopicNum();
-		TopicPage topicPage = new TopicPage(forum.getUrl(), topicNum);
+		TopicPage topicPage = loginPage.getTopicPage(topicNum);
 		String code = topicPage.getCode();
 
 		forum.setTopic(topicNum);

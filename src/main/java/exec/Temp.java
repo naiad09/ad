@@ -15,7 +15,7 @@ public class Temp {
 			LoginPage loginPage = new LoginPage("naiad.mybb.ru");
 			loginPage.login("naiad", "rfhfre12");
 
-			TopicPage topicPage = loginPage.getTopicPage(5);
+			TopicPage topicPage = loginPage.getTopicPage(1);
 			topicPage.post(forum.getCode());
 		}
 		finally {

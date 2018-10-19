@@ -23,16 +23,19 @@ public class Client {
 	private static final String HTTP = "http://";
 
 	private final CloseableHttpClient client = HttpClientBuilder.create().build();
-	private final HashMap<String, String> cookies = new HashMap<>();
+	private final HashMap<String, HashMap<String, String>> cookies = new HashMap<>();
+	private final HashMap<String, String> referers = new HashMap<>();
 
 	public Client() {
 	}
 
-	private void addHeaders(HttpUriRequest post, String referer) {
+	private void addHeaders(HttpUriRequest post) {
 		String host = getHost(post);
 
 		if (cookies.containsKey(host)) {
-			post.addHeader("Cookie", cookies.get(host));
+			String c = getCookies(host);
+			// System.out.println(host + " = " + c);
+			post.addHeader("Cookie", c);
 		}
 		post.setHeader("User-Agent", "Mozilla/5.0");
 		post.setHeader("Accept",
@@ -41,9 +44,19 @@ public class Client {
 		post.setHeader("Accept-Encoding", "gzip, deflate");
 		post.setHeader("Connection", "keep-alive");
 		// referer is crusial
-		post.setHeader("Referer", HTTP + referer);
+		post.setHeader("Referer", HTTP + referers.get(host));
+		post.setHeader("Host", host);
 		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
 		post.setHeader("Upgrade-Insecure-Requests", "1");
+	}
+
+	public String getCookies(String host) {
+		HashMap<String, String> hashMap = cookies.get(host);
+		String collect = "uid=" + hashMap.get("uid");
+		if (hashMap.containsKey("mybb_ru")) {
+			collect = "mybb_ru=" + hashMap.get("mybb_ru") + "; " + collect;
+		}
+		return collect;
 	}
 
 	public HttpResponse execute(HttpUriRequest get) {
@@ -57,12 +70,12 @@ public class Client {
 			Header[] cookiesHeaders = response.getHeaders("Set-Cookie");
 			Stream.of(cookiesHeaders).forEach(h -> {
 				HeaderElement element = h.getElements()[0];
-				String existingCookies = cookies.get(host);
+				HashMap<String, String> existingCookies = cookies.get(host);
 				if (existingCookies == null) {
-					existingCookies = element.getName() + "=" + element.getValue();
-				} else {
-					existingCookies += "; " + element.getName() + "=" + element.getValue();
+					existingCookies = new HashMap<>();
 				}
+
+				existingCookies.put(element.getName(), element.getValue());
 				cookies.put(host, existingCookies);
 			});
 			return response;
@@ -72,20 +85,21 @@ public class Client {
 		}
 	}
 
-	public HttpResponse getResponse(String uri, String referer) {
+	public HttpResponse getResponse(String uri) {
+		referers.put(getHost(uri), uri);
 		uri = HTTP + uri;
 		System.out.println("Get " + uri);
 		HttpGet get = new HttpGet(uri);
-		addHeaders(get, referer);
+		addHeaders(get);
 		HttpResponse response = execute(get);
 		return response;
 	}
 
-	public HttpPost newPost(String uri, String referer) {
+	public HttpPost newPost(String uri) {
 		uri = HTTP + uri;
 		System.out.println("Post " + uri);
 		HttpPost post = new HttpPost(uri);
-		addHeaders(post, referer);
+		addHeaders(post);
 		return post;
 	}
 
@@ -95,8 +109,8 @@ public class Client {
 		return result;
 	}
 
-	public String get(String uri, String referer) {
-		HttpResponse response = getResponse(uri, referer);
+	public String get(String uri) {
+		HttpResponse response = getResponse(uri);
 		String result = getDocumentFromResponse(response);
 		return result;
 	}
@@ -126,6 +140,10 @@ public class Client {
 
 	private static String getHost(HttpUriRequest get) {
 		String string = get.getURI().toString();
+		return getHost(string);
+	}
+
+	private static String getHost(String string) {
 		String replaceAll = string.replaceAll(HTTP, "").replaceAll("/.*", "");
 		return replaceAll;
 	}
