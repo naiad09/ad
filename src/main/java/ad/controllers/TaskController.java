@@ -51,7 +51,7 @@ public class TaskController extends AbstractController<Task> {
 
 	@Override
 	public void displayAll(List<Task> entities) {
-		mainFrame().openFrame(TableInformationPanel.displayTasksList(entities));
+		mainFrame().openFrame(TableInformationPanel.displayTasksListWithReport(entities));
 	}
 
 	public String buildReport() {

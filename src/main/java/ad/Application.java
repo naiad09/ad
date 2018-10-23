@@ -34,7 +34,7 @@ public class Application implements Runnable {
 	@Override
 	public void run() {
 		mainFrame = new MainFrame();
-		new ForumController().displayAll();
+		taskController.displayAll();
 		mainFrame.setVisible(true);
 	}
 
