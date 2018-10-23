@@ -60,6 +60,10 @@ public class UpdateTopicTest extends AbstractTest {
 		}
 		forum.setVisitors(visitors);
 
+		if (forum.getAccount() == null) {
+			forum.setAccount(indexPage.getAccount());
+		}
+
 		ForumHtmlScan scan = indexPage.getTopicId();
 
 		LoginPage loginPage = new LoginPage(forum.getUrl());
@@ -72,9 +76,5 @@ public class UpdateTopicTest extends AbstractTest {
 		forum.setTopic(topicNum);
 		forum.setTopicTitle(scan.getTopicTitle());
 		forum.setCode(code);
-
-		if (forum.getAccount() == null) {
-			forum.setAccount(indexPage.getAccount());
-		}
 	}
 }

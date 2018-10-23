@@ -56,16 +56,18 @@ public class TaskController extends AbstractController<Task> {
 
 	public String buildReport() {
 		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
-		StringBuilder code = new StringBuilder("[quote][align=center]\r\n"
+		StringBuilder code = new StringBuilder("[align=center]\r\n"
 		        + "[size=14][b]" + date + "[/b][/size][/align]\r\n"
 		        + "[table]\n\n");
 
 		List<Task> all = dao.getAll()
-		        .stream().filter(t -> t.getRunStatus() == RunStatus.ACT)
+		        .stream()
+		        .filter(t -> t.getRunStatus() == RunStatus.ACT)
+		        .filter(t -> t.getToday() > 10)
 		        .collect(Collectors.toList());
 		for (int i = 0; i < all.size(); i++) {
 			Task task = all.get(i);
-			code.append("[tr][td rowspan=2 width=9%][img]"
+			code.append("[tr][td rowspan=2 width=7%][img]"
 			        + ((i % 2 == 0)
 			                ? "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/153/maple-leaf_1f341.png"
 			                : "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/153/fallen-leaf_1f342.png")
@@ -79,7 +81,7 @@ public class TaskController extends AbstractController<Task> {
 			        + "%[/td][/tr]\n\n");
 		}
 
-		code.append("[/table][/quote]");
+		code.append("[/table]");
 
 		return code.toString();
 	}
