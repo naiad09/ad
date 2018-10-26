@@ -114,28 +114,8 @@ public class TableInformationPanel extends JPanel {
 		return dialogResult == JOptionPane.YES_OPTION;
 	}
 
-	public static TableInformationPanel displayTasksList(List<Task> tasks) {
-		TableInformationPanel tableInformationPanel = new TableInformationPanel("Tasks", tasks,
-		        new TableColumnHelper<Task>("edit", 50, i -> Application.taskController().edit(i)),
-		        new TableColumnHelper<Task>("del", 50, i -> {
-			        if (confirm("Do you really want to delete #" + i + "?")) {
-				        Application.taskController().delete(i);
-			        }
-		        }),
-		        new TableColumnHelper<Task>("#", Task.class, Integer.class, Task::getId, 50),
-		        new TableColumnHelper<Task>("Client", Task.class, String.class, t -> t.getClient().getUrl()),
-		        new TableColumnHelper<Task>("Paid status", Task.class, PaidStatus.class, Task::getPaidStatus, 100),
-		        new TableColumnHelper<Task>("Total", Task.class, Integer.class, Task::getTotal, 100),
-		        new TableColumnHelper<Task>("Per day", Task.class, Integer.class, Task::getPerDay, 100),
-		        new TableColumnHelper<Task>("Create day", Task.class, LocalDateTime.class, Task::getCreateDate),
-		        new TableColumnHelper<Task>("Run status", Task.class, RunStatus.class, Task::getRunStatus, 100),
-		        new TableColumnHelper<Task>("Done", Task.class, Long.class, Task::getDone, 100),
-		        new TableColumnHelper<Task>("Today", Task.class, Long.class, Task::getToday, 100),
-		        new TableColumnHelper<Task>("Rest", Task.class, Long.class, Task::getRest, 100),
-		        new TableColumnHelper<Task>("%", Task.class, String.class, task -> task.getPercentageDone() + "%", 50),
-		        new TableColumnHelper<Task>("Finished Today", Task.class, Boolean.class,
-		                task -> task.getPerDay() <= task.getToday() || task.getRest() == 0, 50),
-		        new TableColumnHelper<Task>("Ready", Task.class, Boolean.class, task -> task.isReady(), 50));
+	public static TableInformationPanel displayTasksListWithReport(List<Task> tasks) {
+		TableInformationPanel tableInformationPanel = displayTasksList(tasks);
 
 		GridBagLayout gridBagLayout = (GridBagLayout) tableInformationPanel.getLayout();
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
@@ -172,6 +152,31 @@ public class TableInformationPanel extends JPanel {
 		return tableInformationPanel;
 	}
 
+	public static TableInformationPanel displayTasksList(List<Task> tasks) {
+		TableInformationPanel tableInformationPanel = new TableInformationPanel("Tasks", tasks,
+		        new TableColumnHelper<Task>("edit", 50, i -> Application.taskController().edit(i)),
+		        new TableColumnHelper<Task>("del", 50, i -> {
+			        if (confirm("Do you really want to delete #" + i + "?")) {
+				        Application.taskController().delete(i);
+			        }
+		        }),
+		        new TableColumnHelper<Task>("#", Task.class, Integer.class, Task::getId, 50),
+		        new TableColumnHelper<Task>("Client", Task.class, String.class, t -> t.getClient().getUrl()),
+		        new TableColumnHelper<Task>("Paid status", Task.class, PaidStatus.class, Task::getPaidStatus, 100),
+		        new TableColumnHelper<Task>("Total", Task.class, Integer.class, Task::getTotal, 100),
+		        new TableColumnHelper<Task>("Per day", Task.class, Integer.class, Task::getPerDay, 100),
+		        new TableColumnHelper<Task>("Create day", Task.class, LocalDateTime.class, Task::getCreateDate),
+		        new TableColumnHelper<Task>("Run status", Task.class, RunStatus.class, Task::getRunStatus, 100),
+		        new TableColumnHelper<Task>("Done", Task.class, Long.class, Task::getDone, 100),
+		        new TableColumnHelper<Task>("Today", Task.class, Long.class, Task::getToday, 100),
+		        new TableColumnHelper<Task>("Rest", Task.class, Long.class, Task::getRest, 100),
+		        new TableColumnHelper<Task>("%", Task.class, String.class, task -> task.getPercentageDone() + "%", 50),
+		        new TableColumnHelper<Task>("Finished Today", Task.class, Boolean.class,
+		                task -> task.getPerDay() <= task.getToday() || task.getRest() == 0, 50),
+		        new TableColumnHelper<Task>("Ready", Task.class, Boolean.class, task -> task.isReady(), 50));
+		return tableInformationPanel;
+	}
+
 	public static TableInformationPanel displayForumsList(List<Forum> forums) {
 		return new TableInformationPanel("Forums", forums,
 		        new TableColumnHelper<Forum>("edit", 50, i -> Application.forumController().edit(i)),
@@ -191,24 +196,8 @@ public class TableInformationPanel extends JPanel {
 		        new TableColumnHelper<Forum>("Client", Forum.class, Boolean.class, Forum::isClient, 50));
 	}
 
-	public static TableInformationPanel displayBannersList(List<BannerTask> banners) {
-		TableInformationPanel tableInformationPanel = new TableInformationPanel("Banners", banners,
-		        new TableColumnHelper<BannerTask>("edit", 50, i -> Application.bannerController().edit(i)),
-		        new TableColumnHelper<BannerTask>("del", 50, i -> {
-			        if (confirm("Do you really want to delete #" + i + "?")) {
-				        Application.bannerController().delete(i);
-			        }
-		        }),
-		        new TableColumnHelper<BannerTask>("#", BannerTask.class, Integer.class, BannerTask::getId, 50),
-		        new TableColumnHelper<BannerTask>("Client", BannerTask.class, String.class, t -> t.getForum().getUrl()),
-		        new TableColumnHelper<BannerTask>("Image", BannerTask.class, String.class, t -> t.getImage()),
-		        new TableColumnHelper<BannerTask>("Till date", BannerTask.class, LocalDate.class,
-		                BannerTask::getTillDate, 200),
-		        new TableColumnHelper<BannerTask>("Paid status", BannerTask.class, PaidStatus.class,
-		                BannerTask::getPaidStatus, 100),
-		        new TableColumnHelper<BannerTask>("Run status", BannerTask.class, RunStatus.class,
-		                BannerTask::getRunStatus, 100),
-		        new TableColumnHelper<BannerTask>("Big", BannerTask.class, Boolean.class, task -> task.isBig(), 50));
+	public static TableInformationPanel displayBannersListWithCode(List<BannerTask> banners) {
+		TableInformationPanel tableInformationPanel = displayBannersList(banners);
 
 		GridBagLayout gridBagLayout = (GridBagLayout) tableInformationPanel.getLayout();
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
@@ -241,6 +230,27 @@ public class TableInformationPanel extends JPanel {
 		gbc_btnSomeButton.gridy = 2;
 		tableInformationPanel.add(btnSomeButton, gbc_btnSomeButton);
 
+		return tableInformationPanel;
+	}
+
+	public static TableInformationPanel displayBannersList(List<BannerTask> banners) {
+		TableInformationPanel tableInformationPanel = new TableInformationPanel("Banners", banners,
+		        new TableColumnHelper<BannerTask>("edit", 50, i -> Application.bannerController().edit(i)),
+		        new TableColumnHelper<BannerTask>("del", 50, i -> {
+			        if (confirm("Do you really want to delete #" + i + "?")) {
+				        Application.bannerController().delete(i);
+			        }
+		        }),
+		        new TableColumnHelper<BannerTask>("#", BannerTask.class, Integer.class, BannerTask::getId, 50),
+		        new TableColumnHelper<BannerTask>("Client", BannerTask.class, String.class, t -> t.getForum().getUrl()),
+		        new TableColumnHelper<BannerTask>("Image", BannerTask.class, String.class, t -> t.getImage()),
+		        new TableColumnHelper<BannerTask>("Till date", BannerTask.class, LocalDate.class,
+		                BannerTask::getTillDate, 200),
+		        new TableColumnHelper<BannerTask>("Paid status", BannerTask.class, PaidStatus.class,
+		                BannerTask::getPaidStatus, 100),
+		        new TableColumnHelper<BannerTask>("Run status", BannerTask.class, RunStatus.class,
+		                BannerTask::getRunStatus, 100),
+		        new TableColumnHelper<BannerTask>("Big", BannerTask.class, Boolean.class, task -> task.isBig(), 50));
 		return tableInformationPanel;
 	}
 }

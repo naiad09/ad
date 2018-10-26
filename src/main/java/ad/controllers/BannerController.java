@@ -45,7 +45,7 @@ public class BannerController extends AbstractController<BannerTask> {
 
 	@Override
 	public void displayAll(List<BannerTask> entities) {
-		mainFrame().openFrame(TableInformationPanel.displayBannersList(entities));
+		mainFrame().openFrame(TableInformationPanel.displayBannersListWithCode(entities));
 	}
 
 	public void updateSignatures(String signature) {
