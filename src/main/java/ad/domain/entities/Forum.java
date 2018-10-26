@@ -34,7 +34,7 @@ public class Forum extends BaseEntity implements Serializable {
 	@Column(name = "id", unique = true, nullable = false, updatable = false)
 	private Integer id;
 
-	@OneToOne(mappedBy = "forum", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(mappedBy = "forum", orphanRemoval = true)
 	private Account account;
 
 	@Column(name = "url", unique = true, nullable = false, length = 64, updatable = false)
@@ -56,10 +56,7 @@ public class Forum extends BaseEntity implements Serializable {
 	@Column(name = "visitors", nullable = false)
 	private int visitors;
 
-	// @OneToOne(mappedBy = "forum", cascade = { CascadeType.ALL })
-	// private ForumError error;
-	//
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "forum", cascade = { CascadeType.ALL })
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "forum")
 	private List<PrPost> posts = new ArrayList<>();
 
 	@Column(name = "isClient")

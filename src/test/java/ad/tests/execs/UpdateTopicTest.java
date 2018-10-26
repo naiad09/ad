@@ -3,6 +3,8 @@ package ad.tests.execs;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.hibernate.HibernateException;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -35,36 +37,45 @@ public class UpdateTopicTest extends AbstractTest {
 
 	@Test(dataProvider = "forums")
 	public void testTopicUpdate(Forum forum) {
-		update(forum);
+		try {
+			if (update(forum)) {
 
-		forumDao.saveOrUpdate(forum);
-		System.out.println("Saved forum " + forum);
-		assertTrue(forum.isAllSet());
+			forumDao.saveOrUpdate(forum);
+			System.out.println("Saved forum " + forum);
+				assertTrue(forum.isAllSet());
+			} else {
+				throw new SkipException("Forum "+forum.getUrl()+"is deleted");
+			}
+		}
+		catch (HibernateException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public static void update(Forum forum) {
+	public static boolean update(Forum forum) {
 		IndexPage indexPage = new IndexPage(forum.getUrl());
 		try {
 			indexPage.openPage();
 		}
 		catch (Exception e) {
 			forumDao.delete(forum);
-			return;
+			return false;
 		}
 
 		int visitors = indexPage.getVisitors();
 		if (visitors < 4) {
 			if (!forum.isClient() || forum.getPosts().isEmpty()) {
 				forumDao.delete(forum);
+				return false;
 			}
 		}
 		forum.setVisitors(visitors);
 
+		ForumHtmlScan scan = indexPage.getTopicId();
+
 		if (forum.getAccount() == null) {
 			forum.setAccount(indexPage.getAccount());
 		}
-
-		ForumHtmlScan scan = indexPage.getTopicId();
 
 		LoginPage loginPage = new LoginPage(forum.getUrl());
 		loginPage.login(forum.getAccount());
@@ -76,5 +87,6 @@ public class UpdateTopicTest extends AbstractTest {
 		forum.setTopic(topicNum);
 		forum.setTopicTitle(scan.getTopicTitle());
 		forum.setCode(code);
+		return true;
 	}
 }
