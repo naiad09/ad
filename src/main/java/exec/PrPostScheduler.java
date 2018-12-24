@@ -165,6 +165,7 @@ public class PrPostScheduler {
 			LocalDateTime now = LocalDateTime.now();
 			return allForums.stream().filter(Forum::isReady)
 			        .filter(forum -> forum.getId() != client.getId())
+			        .filter(forum->forum.getVisitors()>4)
 			        .filter(forum -> {
 				        LocalDateTime lastPrDate = getLastPrDate(forum, client);
 				        if (lastPrDate == null) {

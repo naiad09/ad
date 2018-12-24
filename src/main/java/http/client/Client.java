@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
@@ -60,29 +61,35 @@ public class Client {
 	}
 
 	public HttpResponse execute(HttpUriRequest get) {
+		String host = getHost(get);
+		HttpResponse response;
 		try {
-			String host = getHost(get);
-
-			HttpResponse response = client.execute(get);
-			if (404 == response.getStatusLine().getStatusCode()) {
-				throw new NotFound404Exception("404 for " + get.getURI());
+			try {
+				response = client.execute(get);
 			}
-			Header[] cookiesHeaders = response.getHeaders("Set-Cookie");
-			Stream.of(cookiesHeaders).forEach(h -> {
-				HeaderElement element = h.getElements()[0];
-				HashMap<String, String> existingCookies = cookies.get(host);
-				if (existingCookies == null) {
-					existingCookies = new HashMap<>();
-				}
-
-				existingCookies.put(element.getName(), element.getValue());
-				cookies.put(host, existingCookies);
-			});
-			return response;
+			catch (UnknownHostException e) {
+				sleep(2000);
+				response = client.execute(get);
+			}
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		if (404 == response.getStatusLine().getStatusCode()) {
+			throw new NotFound404Exception("404 for " + get.getURI());
+		}
+		Header[] cookiesHeaders = response.getHeaders("Set-Cookie");
+		Stream.of(cookiesHeaders).forEach(h -> {
+			HeaderElement element = h.getElements()[0];
+			HashMap<String, String> existingCookies = cookies.get(host);
+			if (existingCookies == null) {
+				existingCookies = new HashMap<>();
+			}
+
+			existingCookies.put(element.getName(), element.getValue());
+			cookies.put(host, existingCookies);
+		});
+		return response;
 	}
 
 	public HttpResponse getResponse(String uri) {
@@ -146,5 +153,13 @@ public class Client {
 	private static String getHost(String string) {
 		String replaceAll = string.replaceAll(HTTP, "").replaceAll("/.*", "");
 		return replaceAll;
+	}
+
+	public static void sleep(int millis) {
+		try {
+			Thread.sleep(millis);
+		}
+		catch (InterruptedException e) {
+		}
 	}
 }

@@ -55,7 +55,7 @@ public class TaskController extends AbstractController<Task> {
 	}
 
 	public String buildReport() {
-		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy"));
 		StringBuilder code = new StringBuilder("[align=center]\r\n"
 		        + "[size=14][b]" + date + "[/b][/size][/align]\r\n"
 		        + "[table]\n\n");
@@ -69,10 +69,11 @@ public class TaskController extends AbstractController<Task> {
 			Task task = all.get(i);
 			code.append("[tr][td rowspan=2 width=7%][img]"
 			        + ((i % 2 == 0)
-			                ? "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/153/maple-leaf_1f341.png"
-			                : "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/153/fallen-leaf_1f342.png")
+			                ? "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/153/christmas-tree_1f384.png"
+			                : "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/153/snowman-without-snow_26c4.png")
 			        + "[/img][/td][td width=1% rowspan=2][/td]\r\n" +
-			        "[td colspan=4][size=12][b][url=http://" + task.getClient().getUrl() + "]"
+			        "[td colspan=4][size=12][b][url=ht"
+			        + "tp://" + task.getClient().getUrl() + "]"
 			        + task.getClient().getForumName() + "[/url][/b][/size][/td][/tr]\r\n" +
 			        "[tr][td][i]Всего[/i]: " + task.getTotal()
 			        + "[/td][td][i]Сегодня[/i]: " + task.getToday()

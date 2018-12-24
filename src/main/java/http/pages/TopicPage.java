@@ -43,7 +43,7 @@ public class TopicPage extends AbstractHttpPage {
 		hiddenKeys.put("form_user", getCurrentLogin());
 
 		text = new AggregateTranslator(
-		        NumericEntityEscaper.between(0x00c0, 0x040f),
+		        NumericEntityEscaper.between(0x00a0, 0x040f),
 		        NumericEntityEscaper.between(0x0450, 0xffff)).translate(text);
 		hiddenKeys.put("req_message", text);
 
