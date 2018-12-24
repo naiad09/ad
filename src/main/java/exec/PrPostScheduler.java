@@ -67,9 +67,25 @@ public class PrPostScheduler {
 
 	private boolean agentsAddPosts() {
 		agents.stream()
-		        .flatMap(agent -> agent.getForumFor().stream()
-		                .map(forum -> new PrPostTask(agent.client, forum, agent.topicPage, null)))
-		        .forEach(postQueue::add);
+		        .forEach(agent -> {
+			        List<PrPostTask> list = agent.getForumFor().stream()
+			                .map(forum -> new PrPostTask(agent.client, forum, agent.topicPage, null))
+			                .collect(Collectors.toList());
+
+			        float factor = (float) postQueue.size() / list.size();
+			        float f = 0;
+			        for (int i = 0; i < list.size(); i++) {
+				        int index = Float.valueOf(f).intValue() + i;
+				        PrPostTask element = list.get(i);
+				        if (index < postQueue.size()) {
+					        postQueue.add(index, element);
+				        } else {
+					        postQueue.add(element);
+				        }
+				        f += factor;
+			        }
+		        });
+
 		return !postQueue.isEmpty();
 	}
 
@@ -96,7 +112,15 @@ public class PrPostScheduler {
 			        ? forum.getCode()
 			        : backLink + "\n\n" + forum.getCode();
 
-			int clientPostId = clientTopicPage.post(codeToPost);
+			int clientPostId;
+			try {
+				clientPostId = clientTopicPage.post(codeToPost);
+			}
+			catch (RuntimeException e) {
+				e.printStackTrace();
+				postQueue.removeIf(p -> p.client == client);
+				return;
+			}
 			String clientBackUrl = client.getPostLink(clientPostId);
 
 			PrPost clientPrPost = new PrPost(client, clientBackUrl);
@@ -136,6 +160,9 @@ public class PrPostScheduler {
 				postQueue.removeIf(p -> p.forum == forum);
 				return false;
 			}
+			catch (RuntimeException e) {
+				return false;
+			}
 
 			if (clientTopicPage.isPresentedOnLastPage(forum)
 			        || codePage.isPresentedOnLastPage(client)) {
@@ -165,7 +192,7 @@ public class PrPostScheduler {
 			LocalDateTime now = LocalDateTime.now();
 			return allForums.stream().filter(Forum::isReady)
 			        .filter(forum -> forum.getId() != client.getId())
-			        .filter(forum->forum.getVisitors()>4)
+			        .filter(forum -> forum.getVisitors() > 4)
 			        .filter(forum -> {
 				        LocalDateTime lastPrDate = getLastPrDate(forum, client);
 				        if (lastPrDate == null) {
