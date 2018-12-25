@@ -29,7 +29,8 @@ public class ForumController extends AbstractController<Forum> {
 
 	@Override
 	public void displayAll(List<Forum> entities) {
-		TableInformationPanel displayForumsList = TableInformationPanel.displayForumsList(entities);
+		TableInformationPanel displayForumsList = TableInformationPanel
+		        .displayForumsList((isClients ? "Clients" : "Forums"), entities);
 		if (!isClients) {
 			displayForumsList.addButton("New forum", e -> newEntity());
 		}

@@ -177,8 +177,8 @@ public class TableInformationPanel extends JPanel {
 		return tableInformationPanel;
 	}
 
-	public static TableInformationPanel displayForumsList(List<Forum> forums) {
-		return new TableInformationPanel("Forums", forums,
+	public static TableInformationPanel displayForumsList(String title, List<Forum> forums) {
+		return new TableInformationPanel(title, forums,
 		        new TableColumnHelper<Forum>("edit", 50, i -> Application.forumController().edit(i)),
 		        new TableColumnHelper<Forum>("del", 50, i -> {
 			        if (confirm("Do you really want to delete #" + i + "?")) {
