@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class EditForumForm extends JPanel {
 		clientCheckbox.setSelected(forum.isClient());
 
 		if (forum.isClient()) {
-			TableInformationPanel tasksPanel = TableInformationPanel.displayTasksList(forum.getTasks())
+			TableInformationPanel tasksPanel = TableInformationPanel.displayTasksList(LocalDate.now(), forum.getTasks())
 			        .addButton("Add task", e -> Application.taskController().newEntity(forum));
 			GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 			gbc_btnNewButton.gridwidth = 3;

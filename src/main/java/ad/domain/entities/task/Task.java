@@ -85,9 +85,13 @@ public class Task extends BaseEntity implements Serializable {
 	}
 
 	public long getToday() {
+		LocalDate date = LocalDate.now();
+		return getPostsForDate(date);
+	}
+
+	public long getPostsForDate(LocalDate date) {
 		List<PrPost> posts = getPosts();
-		LocalDate today = LocalDate.now();
-		return posts.stream().filter(p -> today.equals(p.getDate().toLocalDate())).count();
+		return posts.stream().filter(p -> date.equals(p.getDate().toLocalDate())).count();
 	}
 
 	public long getPercentageDone() {

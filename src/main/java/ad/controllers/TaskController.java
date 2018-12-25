@@ -51,19 +51,32 @@ public class TaskController extends AbstractController<Task> {
 
 	@Override
 	public void displayAll(List<Task> entities) {
-		mainFrame().openFrame(TableInformationPanel.displayTasksListWithReport(entities));
+		LocalDate date = LocalDate.now();
+		displayAll(date, entities);
 	}
 
-	public String buildReport() {
-		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy"));
+	/**
+	 * @deprecated Use {@link #displayAll(LocalDate,List<Task>)} instead
+	 */
+	@Deprecated
+	public void displayAll(List<Task> entities, LocalDate date) {
+		displayAll(date, entities);
+	}
+
+	public void displayAll(LocalDate date, List<Task> entities) {
+		mainFrame().openFrame(TableInformationPanel.displayTasksListWithReport(date, entities));
+	}
+
+	public String buildReport(LocalDate date) {
+		String dateFormatted = date.format(DateTimeFormatter.ofPattern("d MMMM yyyy"));
 		StringBuilder code = new StringBuilder("[align=center]\r\n"
-		        + "[size=14][b]" + date + "[/b][/size][/align]\r\n"
+		        + "[size=14][b]" + dateFormatted + "[/b][/size][/align]\r\n"
 		        + "[table]\n\n");
 
 		List<Task> all = dao.getAll()
 		        .stream()
 		        .filter(t -> t.getRunStatus() == RunStatus.ACT)
-		        .filter(t -> t.getToday() > 10)
+		        .filter(t -> t.getPostsForDate(date) > 10)
 		        .collect(Collectors.toList());
 		for (int i = 0; i < all.size(); i++) {
 			Task task = all.get(i);
@@ -76,7 +89,7 @@ public class TaskController extends AbstractController<Task> {
 			        + "tp://" + task.getClient().getUrl() + "]"
 			        + task.getClient().getForumName() + "[/url][/b][/size][/td][/tr]\r\n" +
 			        "[tr][td][i]Всего[/i]: " + task.getTotal()
-			        + "[/td][td][i]Сегодня[/i]: " + task.getToday()
+			        + "[/td][td][i]Сегодня[/i]: " + task.getPostsForDate(date)
 			        + "[/td][td][i]Осталось[/i]: " + task.getRest()
 			        + "[/td][td]" + task.getPercentageDone()
 			        + "%[/td][/tr]\n\n");

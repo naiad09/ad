@@ -25,6 +25,7 @@ import ad.domain.entities.Forum;
 import ad.domain.entities.task.PaidStatus;
 import ad.domain.entities.task.RunStatus;
 import ad.domain.entities.task.Task;
+import ad.frames.components.JDatePicker;
 import ad.frames.table.MyTable;
 import ad.frames.table.TableColumnHelper;
 
@@ -114,8 +115,8 @@ public class TableInformationPanel extends JPanel {
 		return dialogResult == JOptionPane.YES_OPTION;
 	}
 
-	public static TableInformationPanel displayTasksListWithReport(List<Task> tasks) {
-		TableInformationPanel tableInformationPanel = displayTasksList(tasks);
+	public static TableInformationPanel displayTasksListWithReport(LocalDate date, List<Task> tasks) {
+		TableInformationPanel tableInformationPanel = displayTasksList(date, tasks);
 
 		GridBagLayout gridBagLayout = (GridBagLayout) tableInformationPanel.getLayout();
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
@@ -129,7 +130,7 @@ public class TableInformationPanel extends JPanel {
 		gbc_lblTitle.gridy = 2;
 		tableInformationPanel.add(lblTitle, gbc_lblTitle);
 
-		String buildReport = Application.taskController().buildReport();
+		String buildReport = Application.taskController().buildReport(date);
 
 		JTextArea textarea = MainFrame.buildTextarea(buildReport);
 		GridBagConstraints gbc_lblQuickFind = new GridBagConstraints();
@@ -152,7 +153,7 @@ public class TableInformationPanel extends JPanel {
 		return tableInformationPanel;
 	}
 
-	public static TableInformationPanel displayTasksList(List<Task> tasks) {
+	public static TableInformationPanel displayTasksList(LocalDate date, List<Task> tasks) {
 		TableInformationPanel tableInformationPanel = new TableInformationPanel("Tasks", tasks,
 		        new TableColumnHelper<Task>("edit", 50, i -> Application.taskController().edit(i)),
 		        new TableColumnHelper<Task>("del", 50, i -> {
@@ -168,12 +169,18 @@ public class TableInformationPanel extends JPanel {
 		        new TableColumnHelper<Task>("Create day", Task.class, LocalDateTime.class, Task::getCreateDate),
 		        new TableColumnHelper<Task>("Run status", Task.class, RunStatus.class, Task::getRunStatus, 100),
 		        new TableColumnHelper<Task>("Done", Task.class, Long.class, Task::getDone, 100),
-		        new TableColumnHelper<Task>("Today", Task.class, Long.class, Task::getToday, 100),
+		        new TableColumnHelper<Task>("Today", Task.class, Long.class, t -> t.getPostsForDate(date), 100),
 		        new TableColumnHelper<Task>("Rest", Task.class, Long.class, Task::getRest, 100),
 		        new TableColumnHelper<Task>("%", Task.class, String.class, task -> task.getPercentageDone() + "%", 50),
 		        new TableColumnHelper<Task>("Finished Today", Task.class, Boolean.class,
 		                task -> task.getPerDay() <= task.getToday() || task.getRest() == 0, 50),
 		        new TableColumnHelper<Task>("Ready", Task.class, Boolean.class, task -> task.isReady(), 50));
+
+		tableInformationPanel.addButton(date.toString(), e -> {
+			LocalDate newDate = JDatePicker.chooseDate(date);
+			Application.taskController().displayAll(newDate, tasks);
+		});
+
 		return tableInformationPanel;
 	}
 
